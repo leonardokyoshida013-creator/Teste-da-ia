@@ -582,7 +582,7 @@ function renderFilteredTable(query = '') {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td colspan="6" style="
-        background: rgba(16, 12, 32, 0.92);
+        background: #f8fafc;
         padding: 8px 18px;
         font-size: 11px;
         font-weight: 700;
@@ -660,10 +660,10 @@ async function viewNotes(username, name) {
   notes.sort((a, b) => String(b.date || '').localeCompare(String(a.date || '')));
   notes.forEach(note => {
     const card = document.createElement('div');
-    card.style.cssText = 'background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.15rem;display:flex;flex-direction:column;gap:6px';
+    card.style.cssText = 'background:#f8fafc;border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.15rem;display:flex;flex-direction:column;gap:6px';
     card.innerHTML = `
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span style="font-size:11px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:2px 8px">
+        <span style="font-size:11px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:#eef2ff;border:1px solid #e0e7ff;border-radius:8px;padding:2px 8px">
           <i class="ti ti-calendar" style="font-size:11px"></i> ${escapeHtml(formatDate(note.date))}
         </span>
         ${note.desc ? `<span style="font-size:12px;color:var(--text-muted);font-weight:500">${escapeHtml(note.desc)}</span>` : ''}
@@ -785,11 +785,11 @@ async function renderNotesList() {
   if (notes.length === 0) {
     wrap.innerHTML = `
       <div class="card" style="text-align:center;padding:3.5rem 1.5rem;color:var(--text-faint)">
-        <div style="width:64px;height:64px;border-radius:22px;background:rgba(168,85,247,0.14);border:1px solid rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--accent-primary);font-size:30px">
+        <div style="width:64px;height:64px;border-radius:18px;background:#eef2ff;border:1px solid #e0e7ff;display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--accent-primary);font-size:30px">
           <i class="ti ti-notes"></i>
         </div>
         <h3 style="font-size:16px;color:var(--text);margin-bottom:6px">Nenhuma nota cadastrada ainda</h3>
-        <p style="font-size:13px;color:var(--text-muted);max-width:320px;margin:0 auto 1.5rem">Suas anotações são criptografadas e sincronizadas de forma segura no Firestore.</p>
+        <p style="font-size:13px;color:var(--text-muted);max-width:320px;margin:0 auto 1.5rem">Suas anotações são sincronizadas com validação de esquema no Firestore.</p>
         <button class="btn btn-primary" onclick="openNoteModal()" style="width:auto">
           <i class="ti ti-plus"></i> Criar Primeira Nota
         </button>
@@ -807,7 +807,7 @@ async function renderNotesList() {
     card.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-size:12px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:3px 9px">
+          <span style="font-size:12px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:#eef2ff;border:1px solid #e0e7ff;border-radius:8px;padding:3px 9px">
             <i class="ti ti-calendar" style="font-size:12px"></i> ${escapeHtml(formatDate(note.date))}
           </span>
           ${note.desc ? `<span style="font-size:13px;font-weight:600;color:var(--text)">${escapeHtml(note.desc)}</span>` : ''}
@@ -817,7 +817,7 @@ async function renderNotesList() {
           <button class="btn-icon btn-del-note" title="Excluir nota" style="color:var(--red-text)"><i class="ti ti-trash"></i></button>
         </div>
       </div>
-      <p style="font-size:14px;color:#d6d0ef;line-height:1.7;white-space:pre-wrap;margin-top:2px">${escapeHtml(note.content)}</p>
+      <p style="font-size:14px;color:var(--text);line-height:1.7;white-space:pre-wrap;margin-top:2px">${escapeHtml(note.content)}</p>
     `;
 
     const btnEdit = card.querySelector('.btn-edit-note');
