@@ -1,0 +1,447 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self' 'unsafe-inline' https://www.gstatic.com; style-src 'self' 'unsafe-inline' https://fonts.googleapis.com https://cdn.jsdelivr.net; font-src 'self' https://fonts.gstatic.com https://cdn.jsdelivr.net; connect-src 'self' https://*.firebaseio.com https://*.googleapis.com https://*.firebasestorage.app; img-src 'self' data:; base-uri 'self'; object-src 'none'; form-action 'self';" />
+  <meta name="referrer" content="strict-origin-when-cross-origin" />
+  <meta http-equiv="X-Content-Type-Options" content="nosniff" />
+  <meta name="description" content="BancoSeguro — sistema educacional de autenticação e gestão de usuários com PBKDF2, regras de segurança no Firestore e painel administrativo." />
+  <meta name="theme-color" content="#070b16" />
+  <title>BancoSeguro — Autenticação e gestão com segurança</title>
+  <link rel="stylesheet" href="style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+  <link href="https://fonts.googleapis.com/css2?family=DM+Sans:ital,opsz,wght@0,9..40,400;0,9..40,500;0,9..40,600;0,9..40,700;1,9..40,400&family=DM+Mono:wght@400;500&display=swap" rel="stylesheet" />
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/@tabler/icons-webfont@latest/tabler-icons.min.css" />
+</head>
+<body>
+
+  <!-- BARRA DE NAVEGAÇÃO SUPERIOR FIXA -->
+  <header class="site-header">
+    <button type="button" class="brand" onclick="showLanding()" aria-label="Ir para o início">
+      <span class="brand-icon"><i class="ti ti-shield-lock" aria-hidden="true"></i></span>
+      <span class="brand-name">Banco<span>Seguro</span></span>
+    </button>
+
+    <nav class="site-nav" aria-label="Navegação principal">
+      <button type="button" class="btn btn-ghost" onclick="showLanding()"><i class="ti ti-home" aria-hidden="true"></i> Início</button>
+      <button type="button" class="btn btn-ghost btn-nav-login" onclick="showLogin()"><i class="ti ti-login" aria-hidden="true"></i> Fazer Login</button>
+      <button type="button" class="btn btn-primary" onclick="showRegister()"><i class="ti ti-user-plus" aria-hidden="true"></i> Criar Conta</button>
+    </nav>
+  </header>
+
+  <div class="wrapper" id="app">
+
+    <!-- ===== LANDING PAGE ===== -->
+    <div id="landingScreen">
+      <div class="lp-page">
+
+        <div class="lp-hero">
+          <div class="hero-grid"></div>
+          <div class="hero-glow"></div>
+
+          <div class="hero-inner">
+            <div class="shield-wrap"><i class="ti ti-shield-lock" aria-hidden="true"></i></div>
+            
+            <div class="hero-badge-status">
+              <span class="pulse-dot"></span>
+              <span>Proteção Ativa • PBKDF2 com Salt individual</span>
+            </div>
+
+            <h1>Autenticação e gestão<br><span>com segurança de verdade</span></h1>
+            <p>Projeto educacional com hashing de senhas via PBKDF2 (Web Crypto), proteção contra força bruta, sanitização XSS, controle de papéis (RBAC) e regras de validação no Firestore.</p>
+            
+            <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+              <button class="btn-hero" onclick="showLogin()">
+                <i class="ti ti-login" aria-hidden="true"></i>
+                Entrar no Sistema
+              </button>
+              <button class="btn-hero-sec" onclick="showRegister()">
+                <i class="ti ti-user-plus" aria-hidden="true"></i>
+                Criar Nova Conta
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div class="trust-bar">
+          <div class="trust-item"><i class="ti ti-certificate" aria-hidden="true"></i><strong>PBKDF2</strong> HMAC-SHA-256</div>
+          <div class="trust-item"><i class="ti ti-shield-check" aria-hidden="true"></i><strong>Salt</strong> único por conta</div>
+          <div class="trust-item"><i class="ti ti-eye-off" aria-hidden="true"></i><strong>Zero</strong> senha em texto claro</div>
+          <div class="trust-item"><i class="ti ti-clock-24" aria-hidden="true"></i><strong>30 min</strong> sessão inativa</div>
+        </div>
+
+        <div class="lp-features">
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(59,130,246,0.15)"><i class="ti ti-lock" style="color:#60a5fa" aria-hidden="true"></i></div>
+            <h3>Hash de Senhas</h3>
+            <p>PBKDF2 com salt individual via Web Crypto — nenhuma senha é gravada em texto claro.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(16,185,129,0.15)"><i class="ti ti-server" style="color:#34d399" aria-hidden="true"></i></div>
+            <h3>Sincronização Firestore</h3>
+            <p>Backup em nuvem com fallback local (localStorage) quando offline.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(139,92,246,0.15)"><i class="ti ti-shield-x" style="color:#c4b5fd" aria-hidden="true"></i></div>
+            <h3>Defesa no Cliente</h3>
+            <p>Rate limiting contra força bruta, escape de saída contra XSS e RBAC por papel.</p>
+          </div>
+          <div class="feat-card">
+            <div class="feat-icon" style="background:rgba(245,158,11,0.15)"><i class="ti ti-activity" style="color:#fbbf24" aria-hidden="true"></i></div>
+            <h3>Sessão Controlada</h3>
+            <p>Logout automático após 30 minutos de inatividade e validação de entradas.</p>
+          </div>
+        </div>
+
+        <div class="lp-stats">
+          <div class="stat-col">
+            <div class="stat-num">310k</div>
+            <div class="stat-lbl">Iterações PBKDF2 (contas novas)</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-num">0</div>
+            <div class="stat-lbl">Senhas salvas em texto claro</div>
+          </div>
+          <div class="stat-col">
+            <div class="stat-num">5</div>
+            <div class="stat-lbl">Camadas de proteção no cliente</div>
+          </div>
+        </div>
+
+        <div class="lp-testimonial">
+          <div class="lp-quote">"Projeto educacional desenvolvido para estudar banco de dados, autenticação e as principais camadas de segurança de aplicações web (OWASP): hashing de senhas, rate limiting, RBAC, sanitização de saída e regras de banco de dados."</div>
+          <div class="quote-author">
+            <div class="author-av">BS</div>
+            <div>
+              <div class="author-name">Equipe BancoSeguro</div>
+              <div class="author-role">Projeto de Banco de Dados</div>
+            </div>
+          </div>
+        </div>
+
+        <div class="lp-cta">
+          <div class="cta-inner">
+            <h2>Teste o sistema de autenticação</h2>
+            <p>Crie uma conta com política de senha forte ou entre com uma conta existente.</p>
+            <div style="display:flex;gap:14px;justify-content:center;flex-wrap:wrap">
+              <button class="btn-hero" onclick="showLogin()">
+                <i class="ti ti-login" aria-hidden="true"></i>
+                Fazer Login
+              </button>
+              <button class="btn-hero-sec" onclick="showRegister()">
+                <i class="ti ti-user-plus" aria-hidden="true"></i>
+                Criar Minha Conta
+              </button>
+            </div>
+            <div class="badge-row">
+              <div class="badge-pill"><i class="ti ti-credit-card-off" aria-hidden="true"></i> Sem cartão</div>
+              <div class="badge-pill"><i class="ti ti-shield" aria-hidden="true"></i> 100% Gratuito</div>
+              <div class="badge-pill"><i class="ti ti-lock" aria-hidden="true"></i> Dados Cifrados</div>
+            </div>
+          </div>
+        </div>
+
+      </div>
+    </div>
+    <!-- /LANDING -->
+
+    <!-- LOGIN -->
+    <div class="screen center-screen" id="loginScreen" style="display:none">
+      <div class="card auth-card">
+        <div class="auth-logo">
+          <div class="logo-icon"><i class="ti ti-shield-lock"></i></div>
+          <h1>Portal de Acesso Seguro</h1>
+          <p>Autentique-se com credenciais criptografadas</p>
+        </div>
+        
+        <div class="alert alert-error" id="loginError"></div>
+
+        <div class="field">
+          <label for="loginUser">Nome de usuário</label>
+          <input type="text" id="loginUser" placeholder="Digite seu usuário (ex: leonardo)" autocomplete="username" />
+        </div>
+
+        <div class="field">
+          <label for="loginPass">Senha</label>
+          <div class="password-wrap">
+            <input type="password" id="loginPass" placeholder="Digite sua senha" autocomplete="current-password" />
+            <button type="button" class="btn-toggle-pass" onclick="togglePasswordVisibility('loginPass', this)" title="Mostrar/Ocultar senha">
+              <i class="ti ti-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="loginBtn" onclick="doLogin()">
+          <i class="ti ti-login"></i> Entrar no Sistema
+        </button>
+
+        <button class="btn-link" onclick="showRegister()">Não tem uma conta? Registre-se agora →</button>
+        <button class="btn-link" onclick="showLanding()" style="margin-top:0.35rem;color:var(--text-faint)">← Voltar ao início</button>
+      </div>
+    </div>
+
+    <!-- REGISTER -->
+    <div class="screen center-screen" id="registerScreen" style="display:none">
+      <div class="card auth-card">
+        <div class="auth-logo">
+          <div class="logo-icon"><i class="ti ti-user-plus"></i></div>
+          <h1>Criar Conta Blindada</h1>
+          <p>Seus dados serão cifrados com Salt individual</p>
+        </div>
+
+        <div class="alert alert-error" id="regError"></div>
+        <div class="alert alert-success" id="regSuccess"></div>
+
+        <div class="field">
+          <label for="regName">Nome completo</label>
+          <input type="text" id="regName" placeholder="Seu nome completo" maxlength="100" />
+        </div>
+
+        <div class="field">
+          <label for="regUser">Nome de usuário</label>
+          <input type="text" id="regUser" placeholder="Escolha um @usuário único" autocomplete="username" maxlength="30" />
+        </div>
+
+        <div class="field">
+          <label for="regPass">Senha segura</label>
+          <div class="password-wrap">
+            <input type="password" id="regPass" placeholder="Crie uma senha forte" autocomplete="new-password" oninput="updatePasswordStrength(this.value)" />
+            <button type="button" class="btn-toggle-pass" onclick="togglePasswordVisibility('regPass', this)" title="Mostrar/Ocultar senha">
+              <i class="ti ti-eye"></i>
+            </button>
+          </div>
+
+          <!-- Medidor visual de força -->
+          <div class="pass-strength-meter">
+            <div class="strength-bar"><div class="strength-fill" id="strengthFill"></div></div>
+            <span class="strength-text" id="strengthText">Segurança</span>
+          </div>
+
+          <!-- Tags de validação em tempo real -->
+          <div class="pass-rules-list">
+            <span id="ruleLength" class="rule-tag"><i class="ti ti-check"></i> 8+ chars</span>
+            <span id="ruleUpper" class="rule-tag"><i class="ti ti-check"></i> Maiúscula</span>
+            <span id="ruleLower" class="rule-tag"><i class="ti ti-check"></i> Minúscula</span>
+            <span id="ruleNumber" class="rule-tag"><i class="ti ti-check"></i> Número</span>
+          </div>
+        </div>
+
+        <div class="field">
+          <label for="regPassConf">Confirmar senha</label>
+          <div class="password-wrap">
+            <input type="password" id="regPassConf" placeholder="Repita a senha digitada" autocomplete="new-password" />
+            <button type="button" class="btn-toggle-pass" onclick="togglePasswordVisibility('regPassConf', this)" title="Mostrar/Ocultar senha">
+              <i class="ti ti-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="regBtn" onclick="doRegister()">
+          <i class="ti ti-user-plus"></i> Criar conta segura
+        </button>
+
+        <button class="btn-link" onclick="showLogin()">Já possui conta? Fazer login →</button>
+      </div>
+    </div>
+
+    <!-- DASHBOARD -->
+    <div class="screen dashboard-screen" id="dashboard" style="display:none">
+
+      <!-- TOPBAR -->
+      <header class="topbar">
+        <div class="topbar-left">
+          <div class="avatar" id="topAvatar"></div>
+          <div class="user-info">
+            <div class="user-info-row">
+              <strong id="topName"></strong>
+              <span class="badge" id="topBadge"></span>
+            </div>
+            <span id="topUsername"></span>
+          </div>
+        </div>
+
+        <div class="topbar-right">
+          <div class="live-security-pill">
+            <span class="pulse-dot"></span>
+            <span>Proteção Ativa (PBKDF2)</span>
+          </div>
+          <button class="btn btn-ghost" onclick="doLogout()">
+            <i class="ti ti-logout"></i> Sair
+          </button>
+        </div>
+      </header>
+
+      <!-- PAINEL ADMINISTRATIVO (ADM) -->
+      <div id="admPanel" style="display:none">
+        
+        <!-- CARDS DE ESTATÍSTICAS -->
+        <div class="stats-grid">
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Total de Usuários</span>
+              <div class="stat-icon icon-blue"><i class="ti ti-users"></i></div>
+            </div>
+            <span class="stat-value" id="statTotal">0</span>
+            <div class="stat-bottom"><span class="stat-chip chip-blue"><i class="ti ti-shield-check"></i> Banco Conectado</span></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Administradores</span>
+              <div class="stat-icon icon-purple"><i class="ti ti-shield-lock"></i></div>
+            </div>
+            <span class="stat-value" id="statAdm">0</span>
+            <div class="stat-bottom"><span class="stat-chip chip-purple"><i class="ti ti-key"></i> Acesso Total</span></div>
+          </div>
+
+          <div class="stat-card">
+            <div class="stat-top">
+              <span class="stat-label">Usuários Comuns</span>
+              <div class="stat-icon icon-cyan"><i class="ti ti-user"></i></div>
+            </div>
+            <span class="stat-value" id="statUsers">0</span>
+            <div class="stat-bottom"><span class="stat-chip chip-cyan"><i class="ti ti-notes"></i> Notas Habilitadas</span></div>
+          </div>
+        </div>
+
+        <!-- CONTROLES E BUSCA -->
+        <div class="section-header">
+          <div>
+            <h2>Gerenciamento de Usuários</h2>
+            <p class="section-subtitle">Visualização e controle de contas registradas com PBKDF2</p>
+          </div>
+          <div class="section-actions">
+            <div class="search-box">
+              <i class="ti ti-search"></i>
+              <input type="text" id="userSearchInput" placeholder="Filtrar por nome ou @..." oninput="filterUserTable(this.value)" />
+            </div>
+            <button class="btn btn-primary" onclick="openModal()">
+              <i class="ti ti-plus"></i> Novo usuário
+            </button>
+          </div>
+        </div>
+
+        <!-- TABELA DE USUÁRIOS -->
+        <div class="table-wrap">
+          <table>
+            <thead>
+              <tr>
+                <th>Nome</th>
+                <th>Usuário</th>
+                <th>Tipo</th>
+                <th>Criado em</th>
+                <th>Notas</th>
+                <th>Ações</th>
+              </tr>
+            </thead>
+            <tbody id="userTableBody"></tbody>
+          </table>
+        </div>
+      </div>
+
+      <!-- PAINEL DO USUÁRIO COMUM (BLOCO DE NOTAS) -->
+      <div id="userPanel" style="display:none">
+        <div class="notepad-header">
+          <div>
+            <h2>Minhas Notas Seguras</h2>
+            <p>Armazenadas de forma cifrada na nuvem Firestore</p>
+          </div>
+          <button class="btn btn-primary" onclick="openNoteModal()">
+            <i class="ti ti-plus"></i> Nova nota
+          </button>
+        </div>
+        <div id="notesListWrap"></div>
+      </div>
+
+      <!-- MODAL NOVA NOTA -->
+      <div class="modal-overlay" id="noteModalOverlay" style="display:none" onclick="handleNoteOverlayClick(event)">
+        <div class="card modal-card" style="max-width:480px" role="dialog" aria-modal="true" aria-labelledby="noteModalTitle">
+          <div class="modal-header">
+            <h3 id="noteModalTitle">Nova nota</h3>
+            <button class="btn-icon" onclick="closeNoteModal()" aria-label="Fechar"><i class="ti ti-x"></i></button>
+          </div>
+          <div class="field">
+            <label for="noteDate">Data</label>
+            <input type="date" id="noteDate" />
+          </div>
+          <div class="field">
+            <label for="noteDesc">Título / Descrição breve</label>
+            <input type="text" id="noteDesc" placeholder="Ex: alinhamento estratégico, credenciais, projeto…" maxlength="100" />
+          </div>
+          <div class="field">
+            <label for="noteContent">Conteúdo</label>
+            <textarea id="noteContent" style="width:100%;min-height:140px;resize:vertical" placeholder="Escreva o conteúdo confidencial da nota…" maxlength="20000" spellcheck="true"></textarea>
+          </div>
+          <div class="alert alert-error" id="noteModalError"></div>
+          <button class="btn btn-primary" id="noteModalSaveBtn" onclick="saveNoteModal()">
+            <i class="ti ti-device-floppy"></i> Salvar nota
+          </button>
+        </div>
+      </div>
+
+    </div>
+
+    <!-- MODAL VER NOTAS (ADM) -->
+    <div class="modal-overlay" id="notesModalOverlay" style="display:none" onclick="handleNotesOverlayClick(event)">
+      <div class="card notes-modal-card" role="dialog" aria-modal="true" aria-labelledby="notesModalTitle">
+        <div class="modal-header">
+          <div>
+            <h3 id="notesModalTitle">Notas</h3>
+            <span style="font-size:12px;color:var(--text-muted);font-family:'DM Mono',monospace" id="notesModalSub"></span>
+          </div>
+          <button class="btn-icon" onclick="closeNotesModal()" aria-label="Fechar"><i class="ti ti-x"></i></button>
+        </div>
+        <div id="notesModalList" style="overflow-y:auto;max-height:60vh;display:flex;flex-direction:column;gap:12px;padding:4px 2px"></div>
+        <div style="padding-top:12px;border-top:1px solid var(--border);margin-top:8px">
+          <span id="notesModalCount" style="font-size:12px;color:var(--text-faint);font-family:'DM Mono',monospace"></span>
+        </div>
+      </div>
+    </div>
+
+    <!-- MODAL CRIAR USUÁRIO (ADM) -->
+    <div class="modal-overlay" id="modalOverlay" style="display:none" onclick="handleOverlayClick(event)">
+      <div class="card modal-card" role="dialog" aria-modal="true" aria-labelledby="modalTitle">
+        <div class="modal-header">
+          <h3 id="modalTitle">Novo Usuário</h3>
+          <button class="btn-icon" onclick="closeModal()" aria-label="Fechar"><i class="ti ti-x"></i></button>
+        </div>
+        <div class="alert alert-error" id="modalError"></div>
+        <div class="alert alert-success" id="modalSuccess"></div>
+
+        <div class="field">
+          <label for="mName">Nome completo</label>
+          <input type="text" id="mName" placeholder="Nome do usuário" maxlength="100" />
+        </div>
+
+        <div class="field">
+          <label for="mUser">Nome de usuário (login)</label>
+          <input type="text" id="mUser" placeholder="Ex: joaosilva" maxlength="30" />
+        </div>
+
+        <div class="field">
+          <label for="mPass">Senha inicial forte</label>
+          <div class="password-wrap">
+            <input type="password" id="mPass" placeholder="Mínimo 8 caracteres (A-Z, a-z, 0-9)" />
+            <button type="button" class="btn-toggle-pass" onclick="togglePasswordVisibility('mPass', this)" title="Mostrar/Ocultar senha">
+              <i class="ti ti-eye"></i>
+            </button>
+          </div>
+        </div>
+
+        <button class="btn btn-primary" id="modalCreateBtn" onclick="createUser()">
+          <i class="ti ti-user-check"></i> Criar usuário protegido
+        </button>
+      </div>
+    </div>
+
+  </div>
+
+  <!-- SCRIPTS GLOBAIS COMPATÍVEIS COM file:/// E SERVIDORES HTTP -->
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-app-compat.js"></script>
+  <script src="https://www.gstatic.com/firebasejs/10.12.0/firebase-firestore-compat.js"></script>
+  <script src="db.js"></script>
+  <script src="app.js"></script>
+</body>
+</html>

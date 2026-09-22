@@ -1,0 +1,94 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+
+    function isValidUsername(username) {
+      return username is string
+        && username.size() >= 3
+        && username.size() <= 30
+        && username.matches('^[a-zA-Z0-9._-]+$');
+    }
+
+    function isValidRole(role) {
+      return role == 'user' || role == 'adm';
+    }
+
+    // Contas administradoras semente: só estes nomes podem nascer como 'adm'.
+    // Impede que qualquer visitante se auto-promova criando um documento novo com role 'adm'.
+    function isAdminSeed(username) {
+      return username in ['leonardo', 'abner', 'isabela', 'matheus'];
+    }
+
+    function hasValidCredentials(data) {
+      // Exige hash PBKDF2 + salt. Texto puro não é mais aceito em regras.
+      return data.keys().hasAll(['passwordHash', 'salt', 'iterations'])
+        && data.passwordHash is string && data.passwordHash.size() == 64
+        && data.salt is string && data.salt.size() == 32
+        && data.iterations is int && data.iterations >= 100000
+        && !data.keys().hasAny(['password']);
+    }
+
+    function isValidUserDoc(data) {
+      return data.keys().hasAll(['id', 'name', 'username', 'role', 'createdAt'])
+        && data.id is string
+        && data.name is string && data.name.size() > 0 && data.name.size() <= 100
+        && data.username is string && isValidUsername(data.username)
+        && data.username == data.username.toLowerCase()
+        && isValidRole(data.role)
+        && data.createdAt is string
+        && hasValidCredentials(data);
+    }
+
+    function isValidNoteDoc(data) {
+      return data.keys().hasOnly(['text', 'updatedAt'])
+        && data.text is string
+        && data.text.size() <= 50000
+        && (!('updatedAt' in data) || data.updatedAt is string);
+    }
+
+    // ============================================================
+    // Coleção: usuarios
+    // NOTA: sem Firebase Auth não é possível vincular o dono da
+    // sessão ao documento. Estas regras impedem escalação de papel
+    // e documentos malformados, mas a leitura segue aberta porque a
+    // própria aplicação (client) faz a autenticação.
+    // Ver README — seção "Próximos passos de segurança".
+    // ============================================================
+    match /usuarios/{username} {
+      allow read: if true;
+
+      allow create: if isValidUsername(username)
+                    && request.resource.data.username == username
+                    && request.resource.data.username == request.resource.data.username.toLowerCase()
+                    && isValidUserDoc(request.resource.data)
+                    // Só o seed de administradores pode nascer como 'adm'
+                    && (request.resource.data.role == 'user'
+                        || (request.resource.data.role == 'adm' && isAdminSeed(username)));
+
+      allow update: if isValidUsername(username)
+                    && request.resource.data.username == username
+                    && request.resource.data.username == request.resource.data.username.toLowerCase()
+                    && isValidUserDoc(request.resource.data)
+                    // Não é possível promover um 'user' a 'adm'
+                    && (resource.data.role == request.resource.data.role
+                        || (request.resource.data.role == 'adm'
+                            && isAdminSeed(username)
+                            && resource.data.role == 'adm'));
+
+      // Protege contas administradoras de remoção arbitrária
+      allow delete: if resource.data.role != 'adm';
+    }
+
+    // ============================================================
+    // Coleção: notas
+    // ============================================================
+    match /notas/{username} {
+      allow read: if isValidUsername(username);
+
+      allow create, update: if isValidUsername(username)
+                            && isValidNoteDoc(request.resource.data);
+
+      allow delete: if isValidUsername(username);
+    }
+  }
+}
