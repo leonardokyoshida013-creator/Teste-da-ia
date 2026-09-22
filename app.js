@@ -133,23 +133,23 @@ function updatePasswordStrength(password) {
     label = 'Segurança';
   } else if (score <= 1) {
     width = '20%';
-    color = '#ef4444';
+    color = '#f43f5e';
     label = 'Muito Fraca';
   } else if (score === 2) {
     width = '45%';
-    color = '#f97316';
+    color = '#fb923c';
     label = 'Fraca';
   } else if (score === 3) {
     width = '70%';
-    color = '#eab308';
+    color = '#fbbf24';
     label = 'Média';
   } else if (score === 4) {
     width = '90%';
-    color = '#3b82f6';
+    color = '#a855f7';
     label = 'Forte';
   } else {
     width = '100%';
-    color = '#10b981';
+    color = '#34d399';
     label = 'Excelente';
   }
 
@@ -582,7 +582,7 @@ function renderFilteredTable(query = '') {
     const tr = document.createElement('tr');
     tr.innerHTML = `
       <td colspan="6" style="
-        background: rgba(15, 23, 42, 0.7);
+        background: rgba(16, 12, 32, 0.92);
         padding: 8px 18px;
         font-size: 11px;
         font-weight: 700;
@@ -663,7 +663,7 @@ async function viewNotes(username, name) {
     card.style.cssText = 'background:rgba(255,255,255,0.03);border:1px solid var(--border);border-radius:var(--radius);padding:1rem 1.15rem;display:flex;flex-direction:column;gap:6px';
     card.innerHTML = `
       <div style="display:flex;align-items:center;gap:8px;flex-wrap:wrap">
-        <span style="font-size:11px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);border-radius:6px;padding:2px 8px">
+        <span style="font-size:11px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:2px 8px">
           <i class="ti ti-calendar" style="font-size:11px"></i> ${escapeHtml(formatDate(note.date))}
         </span>
         ${note.desc ? `<span style="font-size:12px;color:var(--text-muted);font-weight:500">${escapeHtml(note.desc)}</span>` : ''}
@@ -785,7 +785,7 @@ async function renderNotesList() {
   if (notes.length === 0) {
     wrap.innerHTML = `
       <div class="card" style="text-align:center;padding:3.5rem 1.5rem;color:var(--text-faint)">
-        <div style="width:64px;height:64px;border-radius:50%;background:rgba(59,130,246,0.1);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--accent-primary);font-size:30px">
+        <div style="width:64px;height:64px;border-radius:22px;background:rgba(168,85,247,0.14);border:1px solid rgba(168,85,247,0.3);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;color:var(--accent-primary);font-size:30px">
           <i class="ti ti-notes"></i>
         </div>
         <h3 style="font-size:16px;color:var(--text);margin-bottom:6px">Nenhuma nota cadastrada ainda</h3>
@@ -807,7 +807,7 @@ async function renderNotesList() {
     card.innerHTML = `
       <div style="display:flex;align-items:flex-start;justify-content:space-between;gap:8px">
         <div style="display:flex;align-items:center;gap:10px;flex-wrap:wrap">
-          <span style="font-size:12px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:rgba(59,130,246,0.1);border:1px solid rgba(59,130,246,0.25);border-radius:6px;padding:3px 9px">
+          <span style="font-size:12px;font-weight:600;color:var(--accent-primary);font-family:'DM Mono',monospace;background:rgba(168,85,247,0.12);border:1px solid rgba(168,85,247,0.3);border-radius:8px;padding:3px 9px">
             <i class="ti ti-calendar" style="font-size:12px"></i> ${escapeHtml(formatDate(note.date))}
           </span>
           ${note.desc ? `<span style="font-size:13px;font-weight:600;color:var(--text)">${escapeHtml(note.desc)}</span>` : ''}
@@ -817,7 +817,7 @@ async function renderNotesList() {
           <button class="btn-icon btn-del-note" title="Excluir nota" style="color:var(--red-text)"><i class="ti ti-trash"></i></button>
         </div>
       </div>
-      <p style="font-size:14px;color:#cbd5e1;line-height:1.7;white-space:pre-wrap;margin-top:2px">${escapeHtml(note.content)}</p>
+      <p style="font-size:14px;color:#d6d0ef;line-height:1.7;white-space:pre-wrap;margin-top:2px">${escapeHtml(note.content)}</p>
     `;
 
     const btnEdit = card.querySelector('.btn-edit-note');
